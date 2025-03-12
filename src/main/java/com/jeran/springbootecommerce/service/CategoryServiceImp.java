@@ -1,5 +1,6 @@
 package com.jeran.springbootecommerce.service;
 
+import com.jeran.springbootecommerce.exceptions.APIException;
 import com.jeran.springbootecommerce.exceptions.ResourceNotFoundException;
 import com.jeran.springbootecommerce.model.Category;
 import com.jeran.springbootecommerce.repository.CategoryRepository;
@@ -18,11 +19,17 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        if(categories.isEmpty())
+            throw new APIException("No Category till not created");
+        return categories;
     }
 
     @Override
     public void createCategory(Category category) {
+        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if (savedCategory != null)
+            throw new APIException("Category with the name " + category.getCategoryName() + " already exists !!");
         categoryRepository.save(category);
     }
 
