@@ -1,12 +1,13 @@
 package com.jeran.springbootecommerce.service;
 
 import com.jeran.springbootecommerce.model.Category;
+import com.jeran.springbootecommerce.payload.CategoryResponse;
 
 import java.util.List;
 
 public interface CategoryService {
 
-    List<Category>  getAllCategories();
+    CategoryResponse getAllCategories();
 
     void createCategory(Category category);
 
