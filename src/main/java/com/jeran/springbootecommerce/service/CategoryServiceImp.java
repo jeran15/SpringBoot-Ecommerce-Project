@@ -9,7 +9,7 @@ import com.jeran.springbootecommerce.repository.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-//this is pagination
+
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class CategoryServiceImp implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getAllCategories() {
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
         List<Category> categories = categoryRepository.findAll();
         if(categories.isEmpty())
             throw new APIException("No Category till not created");
