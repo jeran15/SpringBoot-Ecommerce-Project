@@ -9,6 +9,7 @@ import com.jeran.springbootecommerce.repository.CategoryRepository;
 import com.jeran.springbootecommerce.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,11 @@ public class ProductServiceImpl implements ProductService{
     private  ProductRepository productRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private FileService fileService;
+
+    @Value("${project.image}")
+    private String path;
 
 
     @Override
@@ -120,36 +126,11 @@ public class ProductServiceImpl implements ProductService{
         Product productFromDB = productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product","productId",productId));
 
-        String path = "images/";
-        String fileName = uploadImage(path,image);
+        String fileName = fileService.uploadImage(path,image);
 
         productFromDB.setImage(fileName);
 
         Product updateProductImage = productRepository.save(productFromDB);
         return modelMapper.map(updateProductImage,ProductDTO.class);
     }
-
-    private String uploadImage(String path, MultipartFile file) throws IOException {
-        //File name of Original
-        String originalFileName = file.getOriginalFilename();
-
-        //Generate unique filename
-        String randomId = UUID.randomUUID().toString();
-
-        //abc.jpg --> 1234 ---> 1234.jpg
-        String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
-        String filePath = path + File.separator + fileName;
-
-        //check if the path exist and create
-        File foler = new File(path);
-        if(!foler.exists())
-            foler.mkdirs();
-
-        //Upload to server
-        Files.copy(file.getInputStream(), Paths.get(filePath));
-        //returning file name
-        return fileName;
-    }
-
-
 }
